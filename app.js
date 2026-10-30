@@ -541,6 +541,14 @@
           </div>
         </div>
 
+        <!-- Best Career Paths Unlocked -->
+        <div class="career-roles-box">
+          <div class="career-roles-title"><span>🎯</span> Best Career Paths Unlocked</div>
+          <div class="career-roles-list">
+            ${(rec.careerRoles || []).map(role => `<div class="career-pill">🚀 ${escapeHtml(role)}</div>`).join('')}
+          </div>
+        </div>
+
         <!-- Gains & Benefits -->
         <div class="analysis-box gains-box">
           <div class="box-title"><span>🌟</span> Key Strengths & Fit</div>

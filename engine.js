@@ -337,10 +337,11 @@ class AdvisorEngine {
 
     const recommendations = [rec1, rec2, rec3].filter(Boolean);
 
-    // Compute detailed explanations and "What the student gives up" (Trade-offs)
+    // Compute detailed explanations, trade-offs, and unlocked career roles
     recommendations.forEach(rec => {
       rec.tradeoffs = this.computeTradeoffs(student, rec, recommendations, diagnostics);
       rec.gains = this.computeGains(student, rec);
+      rec.careerRoles = this.computeCareerRoles(rec, student);
     });
 
     diagnostics.isFullyFeasible = recommendations.length >= 3;
@@ -388,6 +389,60 @@ class AdvisorEngine {
     }
 
     return gains;
+  }
+
+  // Derive the 3 best career paths unlocked by this combination
+  computeCareerRoles(combo, student) {
+    const courses = combo.courses;
+    const codes = courses.map(c => c.course_code);
+    const careerTags = courses.flatMap(c => c.career_tags);
+    const hasML = codes.includes('E01') || careerTags.some(t => t.includes('AI') || t.includes('Machine'));
+    const hasBigData = codes.includes('E04') || careerTags.some(t => t.includes('Big Data') || t.includes('Data Science'));
+    const hasCloud = codes.includes('E02') || codes.includes('E10') || careerTags.some(t => t.includes('Cloud') || t.includes('DevOps'));
+    const hasCyber = codes.includes('E03') || careerTags.some(t => t.includes('Cyber') || t.includes('Security'));
+    const hasWeb = codes.includes('E06') || careerTags.some(t => t.includes('Web'));
+    const hasApp = codes.includes('E05') || careerTags.some(t => t.includes('App'));
+    const hasDSA = codes.includes('E08') || careerTags.some(t => t.includes('Competitive'));
+    const hasEntre = codes.includes('E14') || careerTags.some(t => t.includes('Entrepreneurship'));
+    const hasFinance = codes.includes('E15');
+    const hasDesign = codes.includes('E16');
+
+    const roles = [];
+
+    if (hasML && hasBigData) {
+      if (hasEntre) roles.push('AI Startup Founder / Entrepreneur', 'AI Product Manager (AI-PM)', 'Chief AI Officer Track');
+      else if (hasFinance) roles.push('Quantitative Trading Analyst', 'FinTech Data Scientist', 'Algorithmic Risk Modeler');
+      else roles.push('Machine Learning Engineer', 'Big Data Solutions Architect', 'AI Research Specialist');
+    } else if (hasCloud) {
+      if (codes.includes('E10')) roles.push('DevOps & SRE Engineer', 'Cloud Infrastructure Architect', 'CI/CD Automation Lead');
+      else if (hasCyber) roles.push('Cloud Security Engineer', 'SecOps Specialist', 'Network Security Consultant');
+      else roles.push('Cloud Solutions Architect', 'Backend Infrastructure Engineer', 'Enterprise Systems Lead');
+    } else if (hasCyber) {
+      roles.push('Cybersecurity Analyst', 'Information Security Engineer', 'Penetration Tester / Ethical Hacker');
+    } else if (hasDSA) {
+      roles.push('Core Software Development Engineer (SDE II)', 'Algorithms Engineer', 'High-Frequency Systems Developer');
+    } else if (hasApp || hasWeb) {
+      if (hasDesign) roles.push('Product Designer & Frontend Engineer', 'Mobile UX/UI Architect', 'Design Technologist');
+      else roles.push('Full-Stack Software Engineer', 'Mobile Application Developer', 'Frontend Platform Lead');
+    }
+
+    // Dynamic fallbacks based on specific elective skills
+    if (roles.length < 3) {
+      const distinctTags = Array.from(new Set(careerTags));
+      distinctTags.forEach(t => {
+        if (roles.length < 3 && !roles.includes(`${t} Specialist`)) {
+          roles.push(`${t} Specialist`);
+        }
+      });
+    }
+
+    // Ensure at least 3 distinct roles
+    const defaults = ['Software Development Engineer', 'Technology Consultant', 'Systems Architect'];
+    defaults.forEach(d => {
+      if (roles.length < 3 && !roles.includes(d)) roles.push(d);
+    });
+
+    return roles.slice(0, 3);
   }
 
   // Explicitly explain "What the student gives up" (Trade-offs)

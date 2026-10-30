@@ -732,6 +732,47 @@ body {
 .slot-box.filled.slot-i { background: var(--slot-i); }
 .slot-box.filled.slot-j { background: var(--slot-j); }
 
+/* CAREER ROLES UNLOCKED SECTION */
+.career-roles-box {
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(129, 140, 248, 0.3);
+  border-radius: var(--radius-md);
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.career-roles-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #a5b4fc;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.career-roles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.career-pill {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 5px;
+  background: rgba(99, 102, 241, 0.2);
+  border: 1px solid rgba(129, 140, 248, 0.35);
+  color: #e0e7ff;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 /* GAINS & TRADEOFFS SECTION */
 .analysis-box {
   border-radius: var(--radius-md);
