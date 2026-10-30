@@ -30,22 +30,29 @@
         </div>
       </div>
 
-      <!-- Navigation Tabs -->
-      <nav class="nav-tabs" role="tablist">
-        <button id="tab-advisor" class="tab-btn active" role="tab" aria-selected="true">
-          <span class="tab-icon">🎯</span>
-          <span>Advisor & Recommendations</span>
+      <!-- Header actions & Nav Tabs -->
+      <div style="display:flex; align-items:center; gap:1rem;">
+        <button id="btn-view-problem-modal" class="btn btn-outline" style="border-color: rgba(99,102,241,0.4); color:#a5b4fc;">
+          <span>📋 Problem Statement</span>
         </button>
-        <button id="tab-batch" class="tab-btn" role="tab" aria-selected="false">
-          <span class="tab-icon">🧪</span>
-          <span>Batch Test All Students</span>
-          <span class="badge-count" id="total-students-badge">12</span>
-        </button>
-        <button id="tab-data" class="tab-btn" role="tab" aria-selected="false">
-          <span class="tab-icon">📂</span>
-          <span>CSV Datasets & Upload</span>
-        </button>
-      </nav>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs" role="tablist">
+          <button id="tab-advisor" class="tab-btn active" role="tab" aria-selected="true">
+            <span class="tab-icon">🎯</span>
+            <span>Advisor & Recommendations</span>
+          </button>
+          <button id="tab-batch" class="tab-btn" role="tab" aria-selected="false">
+            <span class="tab-icon">🧪</span>
+            <span>Batch Test All Students</span>
+            <span class="badge-count" id="total-students-badge">12</span>
+          </button>
+          <button id="tab-data" class="tab-btn" role="tab" aria-selected="false">
+            <span class="tab-icon">📂</span>
+            <span>CSV Datasets & Upload</span>
+          </button>
+        </nav>
+      </div>
     </header>
 
     <!-- Main Workspace -->
@@ -72,6 +79,59 @@
         <!-- Student Profile Details Bar -->
         <div id="student-profile-display" class="student-profile-grid">
           <!-- Dynamically populated -->
+        </div>
+
+        <!-- Interactive Student Profile Live Simulator -->
+        <div class="simulator-card glass-panel">
+          <div class="simulator-header">
+            <div class="sim-title-wrap">
+              <span class="sim-icon">🎛️</span>
+              <div>
+                <h3 class="sim-title">Live Constraint & Profile Simulator</h3>
+                <p class="sim-subtitle">Adjust student parameters in real-time to simulate what-if scenarios and test rule edge cases live</p>
+              </div>
+            </div>
+            <button id="btn-reset-simulator" class="btn btn-outline btn-sm">↺ Reset Profile</button>
+          </div>
+
+          <div class="simulator-controls-grid">
+            <div class="control-box">
+              <label for="sim-cgpa-slider">CGPA: <strong id="sim-cgpa-val">9.15</strong></label>
+              <input type="range" id="sim-cgpa-slider" min="4.0" max="10.0" step="0.05" value="9.15" class="range-slider">
+            </div>
+
+            <div class="control-box">
+              <label for="sim-workload-select">Workload Preference</label>
+              <select id="sim-workload-select" class="custom-select-sm">
+                <option value="Light">Light (&lt;10 hrs/wk)</option>
+                <option value="Balanced">Balanced (10-14 hrs/wk)</option>
+                <option value="Heavy">Heavy (14+ hrs/wk)</option>
+              </select>
+            </div>
+
+            <div class="control-box">
+              <label>Required Quotas</label>
+              <div class="quota-steppers">
+                <span class="stepper-label">PE:</span>
+                <input type="number" id="sim-req-pe" min="0" max="4" value="2" class="num-input">
+                <span class="stepper-label" style="margin-left:8px;">OE:</span>
+                <input type="number" id="sim-req-oe" min="0" max="3" value="1" class="num-input">
+              </div>
+            </div>
+
+            <div class="control-box">
+              <label for="sim-goal-select">Career Goal</label>
+              <select id="sim-goal-select" class="custom-select-sm">
+                <option value="AI / Machine Learning">AI / Machine Learning</option>
+                <option value="Software Engineering">Software Engineering</option>
+                <option value="Data Science & Analytics">Data Science & Analytics</option>
+                <option value="Cloud & DevOps">Cloud & DevOps</option>
+                <option value="Cybersecurity Specialist">Cybersecurity Specialist</option>
+                <option value="Product & Tech Management">Product & Tech Management</option>
+                <option value="High GPA / Grade Maximization">High GPA / Grade Maximization</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         <!-- Alerts / Unmet Needs Panel (Conditional) -->
@@ -124,9 +184,14 @@
             <button class="filter-btn" data-filter="Partial">Partial Matches (<span id="count-partial">0</span>)</button>
             <button class="filter-btn" data-filter="Failed">Unmet Needs / Edge Cases (<span id="count-failed">0</span>)</button>
           </div>
-          <button id="btn-rerun-batch" class="btn btn-secondary">
-            <span>🔄 Re-run All Tests</span>
-          </button>
+          <div style="display:flex; gap:0.5rem;">
+            <button id="btn-export-batch-csv" class="btn btn-secondary">
+              <span>⬇️ Export Results CSV</span>
+            </button>
+            <button id="btn-rerun-batch" class="btn btn-primary">
+              <span>🔄 Re-run All Tests</span>
+            </button>
+          </div>
         </div>
 
         <!-- Batch Results Table -->
@@ -253,6 +318,41 @@
         <span>No Server Required &bull; Runs 100% In-Browser &bull; Timetable Conflict Free</span>
       </div>
     </footer>
+  </div>
+
+  <!-- Problem Statement Reference Modal -->
+  <div id="problem-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-problem-title">
+    <div class="modal-card glass-panel">
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <span style="font-size:1.5rem;">📋</span>
+          <div>
+            <div class="brand-badge">Official Hackathon Challenge</div>
+            <h3 id="modal-problem-title" class="section-title" style="font-size:1.25rem;">TCS Technology Day: Elective Course Advisor</h3>
+          </div>
+        </div>
+        <button id="btn-close-problem-modal" class="modal-close-btn" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="problem-split">
+          <div class="problem-image-wrap">
+            <h4 style="color:#fff; margin-bottom:0.5rem; font-size:0.95rem;">Uploaded Problem Statement Sheet:</h4>
+            <img src="problem_statement.png" alt="TCS Technology Day Elective Course Advisor Problem Statement" class="problem-img-preview">
+          </div>
+          <div class="problem-summary-wrap">
+            <h4 style="color:#818cf8; margin-bottom:0.6rem;">Key Evaluation Directives:</h4>
+            <ul style="font-size:0.85rem; color:#cbd5e1; line-height:1.6; display:flex; flex-direction:column; gap:0.5rem;">
+              <li><strong>Zero Backend:</strong> Runs directly in the browser with no paid keys or logins.</li>
+              <li><strong>Top 3 Combinations:</strong> Recommends the best 3 elective combinations for selected student.</li>
+              <li><strong>Hard Constraint Adherence:</strong> Strict timetable slot clash avoidance, exact quota verification, and prerequisite satisfaction.</li>
+              <li><strong>Trade-off Transparency:</strong> Explicitly states what the student gives up (sacrificed courses, extra hours, difficulty risk).</li>
+              <li><strong>Unmet Needs Reporting:</strong> Diagnoses when requirements cannot be met.</li>
+              <li><strong>Universal Testing:</strong> Tested against every student in the dataset.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Scripts -->

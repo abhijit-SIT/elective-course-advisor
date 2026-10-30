@@ -78,12 +78,114 @@
     });
   }
 
+  let simulatedStudent = null;
+
   // Event listeners
   function setupEventListeners() {
     studentSelector.addEventListener('change', (e) => {
       currentStudentId = e.target.value;
-      renderAdvisorView();
+      const baseStudent = studentsData.find(s => s.student_id === currentStudentId);
+      if (baseStudent) {
+        simulatedStudent = JSON.parse(JSON.stringify(baseStudent));
+        syncSimulatorInputs(simulatedStudent);
+      }
+      renderAdvisorView(simulatedStudent);
     });
+
+    // Problem Statement Modal
+    const problemModal = document.getElementById('problem-modal');
+    const btnViewProblem = document.getElementById('btn-view-problem-modal');
+    const btnCloseProblem = document.getElementById('btn-close-problem-modal');
+
+    if (btnViewProblem && problemModal) {
+      btnViewProblem.addEventListener('click', () => {
+        problemModal.classList.remove('hidden');
+      });
+    }
+
+    if (btnCloseProblem && problemModal) {
+      btnCloseProblem.addEventListener('click', () => {
+        problemModal.classList.add('hidden');
+      });
+      problemModal.addEventListener('click', (e) => {
+        if (e.target === problemModal) problemModal.classList.add('hidden');
+      });
+    }
+
+    // Simulator inputs
+    const simCgpaSlider = document.getElementById('sim-cgpa-slider');
+    const simCgpaVal = document.getElementById('sim-cgpa-val');
+    const simWorkloadSelect = document.getElementById('sim-workload-select');
+    const simReqPe = document.getElementById('sim-req-pe');
+    const simReqOe = document.getElementById('sim-req-oe');
+    const simGoalSelect = document.getElementById('sim-goal-select');
+    const btnResetSim = document.getElementById('btn-reset-simulator');
+
+    if (simCgpaSlider) {
+      simCgpaSlider.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value).toFixed(2);
+        simCgpaVal.textContent = val;
+        if (simulatedStudent) {
+          simulatedStudent.cgpa = parseFloat(val);
+          renderAdvisorView(simulatedStudent);
+        }
+      });
+    }
+
+    if (simWorkloadSelect) {
+      simWorkloadSelect.addEventListener('change', (e) => {
+        if (simulatedStudent) {
+          simulatedStudent.workload_preference = e.target.value;
+          renderAdvisorView(simulatedStudent);
+        }
+      });
+    }
+
+    if (simReqPe) {
+      simReqPe.addEventListener('change', (e) => {
+        if (simulatedStudent) {
+          simulatedStudent.required_pe = parseInt(e.target.value, 10) || 0;
+          renderAdvisorView(simulatedStudent);
+        }
+      });
+    }
+
+    if (simReqOe) {
+      simReqOe.addEventListener('change', (e) => {
+        if (simulatedStudent) {
+          simulatedStudent.required_oe = parseInt(e.target.value, 10) || 0;
+          renderAdvisorView(simulatedStudent);
+        }
+      });
+    }
+
+    if (simGoalSelect) {
+      simGoalSelect.addEventListener('change', (e) => {
+        if (simulatedStudent) {
+          simulatedStudent.goal = e.target.value;
+          renderAdvisorView(simulatedStudent);
+        }
+      });
+    }
+
+    if (btnResetSim) {
+      btnResetSim.addEventListener('click', () => {
+        const baseStudent = studentsData.find(s => s.student_id === currentStudentId);
+        if (baseStudent) {
+          simulatedStudent = JSON.parse(JSON.stringify(baseStudent));
+          syncSimulatorInputs(simulatedStudent);
+          renderAdvisorView(simulatedStudent);
+        }
+      });
+    }
+
+    // Batch Export CSV
+    const btnExportBatch = document.getElementById('btn-export-batch-csv');
+    if (btnExportBatch) {
+      btnExportBatch.addEventListener('click', () => {
+        exportBatchResultsCSV();
+      });
+    }
 
     btnRerunBatch.addEventListener('click', () => {
       renderBatchView();
@@ -151,6 +253,46 @@
     });
   }
 
+  function syncSimulatorInputs(student) {
+    if (!student) return;
+    const simCgpaSlider = document.getElementById('sim-cgpa-slider');
+    const simCgpaVal = document.getElementById('sim-cgpa-val');
+    const simWorkloadSelect = document.getElementById('sim-workload-select');
+    const simReqPe = document.getElementById('sim-req-pe');
+    const simReqOe = document.getElementById('sim-req-oe');
+    const simGoalSelect = document.getElementById('sim-goal-select');
+
+    if (simCgpaSlider) simCgpaSlider.value = student.cgpa;
+    if (simCgpaVal) simCgpaVal.textContent = student.cgpa;
+    if (simWorkloadSelect) simWorkloadSelect.value = student.workload_preference;
+    if (simReqPe) simReqPe.value = student.required_pe;
+    if (simReqOe) simReqOe.value = student.required_oe;
+    if (simGoalSelect) {
+      // Find matching option or default to first
+      let found = false;
+      for (const opt of simGoalSelect.options) {
+        if (opt.value.toLowerCase() === (student.goal || '').toLowerCase()) {
+          simGoalSelect.value = opt.value;
+          found = true;
+          break;
+        }
+      }
+      if (!found) simGoalSelect.selectedIndex = 0;
+    }
+  }
+
+  function exportBatchResultsCSV() {
+    const summary = engine.testAllStudents();
+    let csv = "student_id,name,goal,cgpa,required_pe,required_oe,workload_preference,status,combinations_found,top_combination_courses,weekly_hours,unmet_notes\n";
+    summary.results.forEach(r => {
+      const topCourses = r.topRecommendation ? r.topRecommendation.courses.map(c => `${c.course_code}(${c.slot})`).join(';') : 'None';
+      const hours = r.topRecommendation ? r.topRecommendation.totalWeeklyHours : 0;
+      const notes = (r.unmetReasons[0] || 'Fully Validated').replace(/"/g, '""');
+      csv += `"${r.student_id}","${r.name}","${r.goal}",${r.cgpa},${r.required_pe},${r.required_oe},"${r.workload_preference}","${r.status}",${r.combinationsFound},"${topCourses}",${hours},"${notes}"\n`;
+    });
+    downloadCSV(csv, 'batch_validation_results.csv');
+  }
+
   function setupFileUpload(inputId, callback) {
     const fileInput = document.getElementById(inputId);
     fileInput.addEventListener('change', (e) => {
@@ -197,9 +339,14 @@
   }
 
   // Render Advisor View
-  function renderAdvisorView() {
-    const student = studentsData.find(s => s.student_id === currentStudentId) || studentsData[0];
+  function renderAdvisorView(overrideStudent) {
+    const student = overrideStudent || (studentsData.find(s => s.student_id === currentStudentId) || studentsData[0]);
     if (!student) return;
+
+    if (!overrideStudent && (!simulatedStudent || simulatedStudent.student_id !== student.student_id)) {
+      simulatedStudent = JSON.parse(JSON.stringify(student));
+      syncSimulatorInputs(simulatedStudent);
+    }
 
     renderStudentProfile(student);
 
