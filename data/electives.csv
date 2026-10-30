@@ -1,0 +1,19 @@
+course_code,course_name,type,slot,prerequisites,difficulty,weekly_hours,career_tags,skill_tags,related_subjects
+CS301,Deep Learning & Neural Networks,Program Elective,Slot A,CS201;MA102,Hard,5,AI / Machine Learning;Data Science & Analytics,PyTorch;Neural Networks;TensorFlow,Mathematics;Python;Machine Learning
+CS302,Cloud Infrastructure & DevOps,Program Elective,Slot B,CS202,Medium,4,Cloud & DevOps;Software Engineering,Docker;Kubernetes;AWS;CI/CD,Operating Systems;Computer Networks
+CS303,Advanced Algorithms & Optimization,Program Elective,Slot A,CS201,Hard,5,Software Engineering;Competitive Programming,Dynamic Programming;Graph Theory;Optimization,Data Structures;Algorithms
+CS304,Natural Language Processing,Program Elective,Slot C,CS201;MA102,Medium,4,AI / Machine Learning;Data Science & Analytics,Transformers;LLMs;Text Mining;NLP,Python;Mathematics;Probability
+CS305,Cybersecurity & Penetration Testing,Program Elective,Slot B,CS202,Hard,5,Cybersecurity Specialist;Software Engineering,Network Security;Ethical Hacking;Cryptography,Computer Networks;Operating Systems
+CS306,Database Systems & Big Data,Program Elective,Slot D,CS101,Medium,4,Data Science & Analytics;Cloud & DevOps,SQL;Distributed Systems;Spark;NoSQL,Database Management;Data Structures
+CS307,Full-Stack Web Architectures,Program Elective,Slot C,CS101,Easy,3,Software Engineering;Product & Tech Management,React;Node.js;GraphQL;REST APIs,Web Development;Programming
+CS308,Reinforcement Learning & Robotics,Program Elective,Slot E,CS201;MA102,Hard,6,AI / Machine Learning;Robotics,Control Theory;Markov Decision Processes;Q-Learning,Mathematics;Linear Algebra;Python
+CS309,Mobile App Development (Flutter),Program Elective,Slot D,CS101,Easy,3,Software Engineering;Product & Tech Management,Dart;Flutter;Mobile UX;State Management,Programming;Object Oriented Programming
+CS310,Distributed Systems & Blockchain,Program Elective,Slot E,CS202,Hard,5,Software Engineering;Cybersecurity Specialist,Consensus;Smart Contracts;P2P Networks,Computer Networks;Operating Systems
+OE401,Technology Product Management,Open Elective,Slot B,None,Easy,3,Product & Tech Management;High GPA / Grade Maximization,Agile;Sprint Planning;User Research;Roadmapping,Management;Communication
+OE402,Financial Engineering & Algorithmic Trading,Open Elective,Slot A,MA101,Hard,5,Data Science & Analytics;High GPA / Grade Maximization,Quantitative Finance;Time Series;Derivatives,Mathematics;Statistics;Economics
+OE403,Applied Human-Computer Interaction & UX,Open Elective,Slot D,None,Easy,3,Product & Tech Management;Software Engineering,Figma;Usability Testing;Wireframing;Design Systems,Design;Psychology
+OE404,Environmental Science & Green Tech,Open Elective,Slot C,None,Easy,2,Sustainability;High GPA / Grade Maximization,Carbon Accounting;Renewable Tech;ESG Reporting,Environmental Studies
+OE405,Quantum Computing Fundamentals,Open Elective,Slot E,MA102,Hard,5,AI / Machine Learning;Research & Academia,Qubits;Quantum Gates;Qiskit,Physics;Linear Algebra;Mathematics
+OE406,Organizational Psychology & Leadership,Open Elective,Slot B,None,Easy,2,Product & Tech Management;High GPA / Grade Maximization,Negotiation;Team Dynamics;Leadership,Psychology;Management
+OE407,Bioinformatics & Computational Biology,Open Elective,Slot D,CS101;MA101,Medium,4,Data Science & Analytics;Healthcare Tech,Genomics;Sequence Alignment;Biostatistics,Biology;Statistics;Python
+OE408,Intellectual Property Rights & Cyber Law,Open Elective,Slot C,None,Easy,3,Cybersecurity Specialist;Product & Tech Management,Patent Law;Data Privacy;GDPR;Compliance,Law;Ethics

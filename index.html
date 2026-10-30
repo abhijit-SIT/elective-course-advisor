@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elective Course Advisor | TCS Technology Day</title>
+  <meta name="description" content="Intelligent client-side course recommendation engine optimizing student elective combinations based on goals, prerequisites, timetable clash constraints, and workload preferences.">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-logo-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            <polyline points="10 8 13 11 16 8"></polyline>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-badge">TCS Technology Day Challenge</div>
+          <h1 class="brand-title">Elective Course Advisor</h1>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" role="tablist">
+        <button id="tab-advisor" class="tab-btn active" role="tab" aria-selected="true">
+          <span class="tab-icon">🎯</span>
+          <span>Advisor & Recommendations</span>
+        </button>
+        <button id="tab-batch" class="tab-btn" role="tab" aria-selected="false">
+          <span class="tab-icon">🧪</span>
+          <span>Batch Test All Students</span>
+          <span class="badge-count" id="total-students-badge">12</span>
+        </button>
+        <button id="tab-data" class="tab-btn" role="tab" aria-selected="false">
+          <span class="tab-icon">📂</span>
+          <span>CSV Datasets & Upload</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="main-content">
+      
+      <!-- ================= SECTION 1: ADVISOR & RECOMMENDATIONS ================= -->
+      <section id="view-advisor" class="view-panel active">
+        <!-- Student Selection Bar -->
+        <div class="student-select-card glass-panel">
+          <div class="select-group">
+            <label for="student-selector" class="control-label">
+              <span class="label-icon">👤</span> Select Student Profile:
+            </label>
+            <div class="selector-wrapper">
+              <select id="student-selector" class="custom-select" aria-label="Select student profile"></select>
+            </div>
+          </div>
+
+          <div class="quick-stats-pills" id="quick-student-summary">
+            <!-- Dynamically injected -->
+          </div>
+        </div>
+
+        <!-- Student Profile Details Bar -->
+        <div id="student-profile-display" class="student-profile-grid">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Alerts / Unmet Needs Panel (Conditional) -->
+        <div id="unmet-needs-alert" class="alert-box alert-warning hidden" role="alert">
+          <!-- Injected when student needs cannot be fully met -->
+        </div>
+
+        <!-- Recommendations Container -->
+        <div class="recommendations-section">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Best 3 Elective Combinations</h2>
+              <p class="section-subtitle">Ranked by goal alignment, schedule feasibility, prerequisite satisfaction, and grade safety</p>
+            </div>
+            <div class="legend-pills">
+              <span class="legend-item"><span class="dot slot-a"></span>Slot A</span>
+              <span class="legend-item"><span class="dot slot-b"></span>Slot B</span>
+              <span class="legend-item"><span class="dot slot-c"></span>Slot C</span>
+              <span class="legend-item"><span class="dot slot-d"></span>Slot D</span>
+              <span class="legend-item"><span class="dot slot-e"></span>Slot E</span>
+            </div>
+          </div>
+
+          <!-- Cards Grid -->
+          <div id="recommendations-grid" class="cards-grid">
+            <!-- Recommendation cards dynamically generated -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SECTION 2: BATCH TESTING VIEW ================= -->
+      <section id="view-batch" class="view-panel hidden">
+        <div class="batch-header-card glass-panel">
+          <div class="batch-info">
+            <h2 class="batch-title">Universal Test Suite: Evaluated Against Every Student</h2>
+            <p class="batch-desc">
+              Automatic validation engine verifying constraint satisfaction, timetable clash avoidance, prerequisite enforcement, and trade-off analysis across all student profiles.
+            </p>
+          </div>
+          <div class="batch-metrics-row" id="batch-metrics-container">
+            <!-- Summary cards injected dynamically -->
+          </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="filter-bar">
+          <div class="filter-buttons" id="batch-filters">
+            <button class="filter-btn active" data-filter="all">All Students (<span id="count-all">0</span>)</button>
+            <button class="filter-btn" data-filter="Passed">Fully Satisfied (<span id="count-passed">0</span>)</button>
+            <button class="filter-btn" data-filter="Partial">Partial Matches (<span id="count-partial">0</span>)</button>
+            <button class="filter-btn" data-filter="Failed">Unmet Needs / Edge Cases (<span id="count-failed">0</span>)</button>
+          </div>
+          <button id="btn-rerun-batch" class="btn btn-secondary">
+            <span>🔄 Re-run All Tests</span>
+          </button>
+        </div>
+
+        <!-- Batch Results Table -->
+        <div class="table-card glass-panel">
+          <div class="table-responsive">
+            <table class="data-table" id="batch-results-table">
+              <thead>
+                <tr>
+                  <th>Student ID</th>
+                  <th>Student Name</th>
+                  <th>Goal</th>
+                  <th>CGPA</th>
+                  <th>Quota Req</th>
+                  <th>Workload Pref</th>
+                  <th>Status</th>
+                  <th>Top Combo Recommended</th>
+                  <th>Validation & Unmet Notes</th>
+                </tr>
+              </thead>
+              <tbody id="batch-table-body">
+                <!-- Injected dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SECTION 3: DATA & CSV MANAGEMENT ================= -->
+      <section id="view-data" class="view-panel hidden">
+        <div class="data-mgmt-header glass-panel">
+          <div>
+            <h2 class="section-title">Data Management & CSV Inspector</h2>
+            <p class="section-subtitle">Runs 100% in-browser with zero server requirements. Use default benchmark datasets or upload custom CSVs.</p>
+          </div>
+          <div class="action-buttons-group">
+            <button id="btn-download-electives-csv" class="btn btn-secondary">
+              <span>⬇️ Download Electives CSV</span>
+            </button>
+            <button id="btn-download-students-csv" class="btn btn-secondary">
+              <span>⬇️ Download Students CSV</span>
+            </button>
+            <button id="btn-reset-default-data" class="btn btn-outline">
+              <span>↺ Reset to Default Data</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Upload Drop Zones -->
+        <div class="upload-zones-grid">
+          <div class="upload-card glass-panel" id="drop-electives">
+            <div class="upload-icon">📚</div>
+            <h3>Upload Custom Electives CSV</h3>
+            <p>Columns: <code>course_code,course_name,type,slot,prerequisites,difficulty,weekly_hours,career_tags,skill_tags,related_subjects</code></p>
+            <input type="file" id="input-electives-file" accept=".csv" class="file-input">
+            <button class="btn btn-primary" onclick="document.getElementById('input-electives-file').click()">Select File</button>
+          </div>
+
+          <div class="upload-card glass-panel" id="drop-students">
+            <div class="upload-icon">🎓</div>
+            <h3>Upload Custom Students CSV</h3>
+            <p>Columns: <code>student_id,name,goal,cgpa,subjects_cleared,weak_subjects,workload_preference,required_pe,required_oe</code></p>
+            <input type="file" id="input-students-file" accept=".csv" class="file-input">
+            <button class="btn btn-primary" onclick="document.getElementById('input-students-file').click()">Select File</button>
+          </div>
+        </div>
+
+        <!-- Raw Data Tables Tabs -->
+        <div class="subtabs-bar">
+          <button class="subtab-btn active" id="subtab-electives">Electives Catalog (<span id="electives-count-tag">18</span>)</button>
+          <button class="subtab-btn" id="subtab-students">Students Registry (<span id="students-count-tag">12</span>)</button>
+        </div>
+
+        <div class="table-card glass-panel" id="table-container-electives">
+          <div class="table-responsive">
+            <table class="data-table" id="table-electives-raw">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Course Title</th>
+                  <th>Type</th>
+                  <th>Slot</th>
+                  <th>Prerequisites</th>
+                  <th>Difficulty</th>
+                  <th>Hours/Wk</th>
+                  <th>Career Tags</th>
+                  <th>Skill Tags</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-electives-raw"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="table-card glass-panel hidden" id="table-container-students">
+          <div class="table-responsive">
+            <table class="data-table" id="table-students-raw">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Goal</th>
+                  <th>CGPA</th>
+                  <th>Cleared Subjects</th>
+                  <th>Weak Subjects</th>
+                  <th>Workload</th>
+                  <th>Req PE</th>
+                  <th>Req OE</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-students-raw"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-left">
+        <span>Elective Course Advisor</span> &bull; <span>Constraint Satisfaction & Recommendation Engine</span>
+      </div>
+      <div class="footer-right">
+        <span>No Server Required &bull; Runs 100% In-Browser &bull; Timetable Conflict Free</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script src="data/defaultData.js"></script>
+  <script src="engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

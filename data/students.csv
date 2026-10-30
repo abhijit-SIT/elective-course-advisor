@@ -1,0 +1,13 @@
+student_id,name,goal,cgpa,subjects_cleared,weak_subjects,workload_preference,required_pe,required_oe
+STU001,Aarav Sharma,AI / Machine Learning,9.15,CS101;CS201;CS202;MA101;MA102,None,Heavy,2,1
+STU002,Priya Patel,Software Engineering,8.40,CS101;CS201;CS202;MA101,Mathematics,Balanced,2,1
+STU003,Rohan Verma,Cybersecurity Specialist,7.65,CS101;CS202,Data Structures;Algorithms,Balanced,2,1
+STU004,Ananya Iyer,High GPA / Grade Maximization,6.80,CS101;MA101,Mathematics;Operating Systems,Light,2,1
+STU005,Vikram Malhotra,AI / Machine Learning,8.20,CS101;CS201,MA102;Mathematics,Balanced,2,1
+STU006,Sneha Kulkarni,Data Science & Analytics,8.85,CS101;CS201;MA101;MA102,Computer Networks,Balanced,2,1
+STU007,Kabir Mehta,Product & Tech Management,7.10,CS101,Linear Algebra;Algorithms,Light,1,2
+STU008,Tanya Sen,Cloud & DevOps,8.05,CS101;CS202,Mathematics,Balanced,2,1
+STU009,Arjun Reddy,Competitive Programming & Algorithms,9.45,CS101;CS201;CS202;MA101;MA102,Psychology,Heavy,2,1
+STU010,Neha Gupta (Edge Case - Prerequisites Deficit),AI / Machine Learning,5.90,CS101,Mathematics;Linear Algebra;Operating Systems,Light,3,1
+STU011,Ishaan Joshi (Edge Case - Strict Slot Clash),AI / Machine Learning,8.50,CS101;CS201;MA101;MA102,None,Heavy,3,0
+STU012,Meera Nambiar,Software Engineering,7.90,CS101;CS201,Operating Systems,Balanced,2,1
