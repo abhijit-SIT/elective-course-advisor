@@ -92,26 +92,6 @@
       renderAdvisorView(simulatedStudent);
     });
 
-    // Problem Statement Modal
-    const problemModal = document.getElementById('problem-modal');
-    const btnViewProblem = document.getElementById('btn-view-problem-modal');
-    const btnCloseProblem = document.getElementById('btn-close-problem-modal');
-
-    if (btnViewProblem && problemModal) {
-      btnViewProblem.addEventListener('click', () => {
-        problemModal.classList.remove('hidden');
-      });
-    }
-
-    if (btnCloseProblem && problemModal) {
-      btnCloseProblem.addEventListener('click', () => {
-        problemModal.classList.add('hidden');
-      });
-      problemModal.addEventListener('click', (e) => {
-        if (e.target === problemModal) problemModal.classList.add('hidden');
-      });
-    }
-
     // Simulator inputs
     const simCgpaSlider = document.getElementById('sim-cgpa-slider');
     const simCgpaVal = document.getElementById('sim-cgpa-val');

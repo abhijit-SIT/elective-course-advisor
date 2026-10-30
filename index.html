@@ -30,29 +30,22 @@
         </div>
       </div>
 
-      <!-- Header actions & Nav Tabs -->
-      <div style="display:flex; align-items:center; gap:1rem;">
-        <button id="btn-view-problem-modal" class="btn btn-outline" style="border-color: rgba(99,102,241,0.4); color:#a5b4fc;">
-          <span>📋 Problem Statement</span>
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" role="tablist">
+        <button id="tab-advisor" class="tab-btn active" role="tab" aria-selected="true">
+          <span class="tab-icon">🎯</span>
+          <span>Advisor & Recommendations</span>
         </button>
-
-        <!-- Navigation Tabs -->
-        <nav class="nav-tabs" role="tablist">
-          <button id="tab-advisor" class="tab-btn active" role="tab" aria-selected="true">
-            <span class="tab-icon">🎯</span>
-            <span>Advisor & Recommendations</span>
-          </button>
-          <button id="tab-batch" class="tab-btn" role="tab" aria-selected="false">
-            <span class="tab-icon">🧪</span>
-            <span>Batch Test All Students</span>
-            <span class="badge-count" id="total-students-badge">12</span>
-          </button>
-          <button id="tab-data" class="tab-btn" role="tab" aria-selected="false">
-            <span class="tab-icon">📂</span>
-            <span>CSV Datasets & Upload</span>
-          </button>
-        </nav>
-      </div>
+        <button id="tab-batch" class="tab-btn" role="tab" aria-selected="false">
+          <span class="tab-icon">🧪</span>
+          <span>Batch Test All Students</span>
+          <span class="badge-count" id="total-students-badge">12</span>
+        </button>
+        <button id="tab-data" class="tab-btn" role="tab" aria-selected="false">
+          <span class="tab-icon">📂</span>
+          <span>CSV Datasets & Upload</span>
+        </button>
+      </nav>
     </header>
 
     <!-- Main Workspace -->
@@ -323,41 +316,6 @@
         <span>No Server Required &bull; Runs 100% In-Browser &bull; Timetable Conflict Free</span>
       </div>
     </footer>
-  </div>
-
-  <!-- Problem Statement Reference Modal -->
-  <div id="problem-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-problem-title">
-    <div class="modal-card glass-panel">
-      <div class="modal-header">
-        <div style="display:flex; align-items:center; gap:0.5rem;">
-          <span style="font-size:1.5rem;">📋</span>
-          <div>
-            <div class="brand-badge">Official Hackathon Challenge</div>
-            <h3 id="modal-problem-title" class="section-title" style="font-size:1.25rem;">TCS Technology Day: Elective Course Advisor</h3>
-          </div>
-        </div>
-        <button id="btn-close-problem-modal" class="modal-close-btn" aria-label="Close modal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="problem-split">
-          <div class="problem-image-wrap">
-            <h4 style="color:#fff; margin-bottom:0.5rem; font-size:0.95rem;">Uploaded Problem Statement Sheet:</h4>
-            <img src="problem_statement.png" alt="TCS Technology Day Elective Course Advisor Problem Statement" class="problem-img-preview">
-          </div>
-          <div class="problem-summary-wrap">
-            <h4 style="color:#818cf8; margin-bottom:0.6rem;">Key Evaluation Directives:</h4>
-            <ul style="font-size:0.85rem; color:#cbd5e1; line-height:1.6; display:flex; flex-direction:column; gap:0.5rem;">
-              <li><strong>Zero Backend:</strong> Runs directly in the browser with no paid keys or logins.</li>
-              <li><strong>Top 3 Combinations:</strong> Recommends the best 3 elective combinations for selected student.</li>
-              <li><strong>Hard Constraint Adherence:</strong> Strict timetable slot clash avoidance, exact quota verification, and prerequisite satisfaction.</li>
-              <li><strong>Trade-off Transparency:</strong> Explicitly states what the student gives up (sacrificed courses, extra hours, difficulty risk).</li>
-              <li><strong>Unmet Needs Reporting:</strong> Diagnoses when requirements cannot be met.</li>
-              <li><strong>Universal Testing:</strong> Tested against every student in the dataset.</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <!-- Scripts -->
