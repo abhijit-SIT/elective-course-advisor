@@ -367,8 +367,13 @@
 
   // Render Student Profile Details
   function renderStudentProfile(student) {
-    const clearedList = (student.subjects_cleared || '').split(';').filter(Boolean);
-    const weakList = (student.weak_subjects || '').split(';').filter(Boolean);
+    const clearedList = Array.isArray(student.subjects_cleared)
+      ? student.subjects_cleared
+      : String(student.subjects_cleared || '').split(';').map(c => c.trim()).filter(Boolean);
+
+    const weakList = Array.isArray(student.weak_subjects)
+      ? student.weak_subjects
+      : String(student.weak_subjects || '').split(';').map(w => w.trim()).filter(Boolean);
 
     // Quick summary pills
     quickStudentSummary.innerHTML = `

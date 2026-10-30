@@ -33,25 +33,37 @@ class AdvisorEngine {
   }
 
   normalizeStudent(s) {
+    if (!s) return null;
+    const cleared = Array.isArray(s.subjects_cleared) 
+      ? s.subjects_cleared 
+      : String(s.subjects_cleared || '').split(';').map(sc => sc.trim()).filter(Boolean);
+
+    const weak = Array.isArray(s.weak_subjects) 
+      ? s.weak_subjects 
+      : String(s.weak_subjects || '').split(';').map(ws => ws.trim()).filter(Boolean);
+
     return {
-      student_id: (s.student_id || '').trim(),
-      name: (s.name || '').trim(),
-      goal: (s.goal || '').trim(),
+      student_id: String(s.student_id || '').trim(),
+      name: String(s.name || '').trim(),
+      goal: String(s.goal || '').trim(),
       cgpa: parseFloat(s.cgpa) || 7.0,
-      subjects_cleared: (s.subjects_cleared || '').split(';').map(sc => sc.trim()).filter(Boolean),
-      weak_subjects: (s.weak_subjects || '').split(';').map(ws => ws.trim()).filter(Boolean),
-      workload_preference: (s.workload_preference || 'Balanced').trim(),
+      subjects_cleared: cleared,
+      weak_subjects: weak,
+      workload_preference: String(s.workload_preference || 'Balanced').trim(),
       required_pe: parseInt(s.required_pe, 10) || 0,
       required_oe: parseInt(s.required_oe, 10) || 0
     };
   }
 
-  // Check if student clears prerequisites for a course (case-insensitive)
+  // Check if student clears prerequisites for a course (case-insensitive & safe)
   checkPrerequisites(student, elective) {
     if (!elective.prerequisites || elective.prerequisites.length === 0) {
       return { satisfied: true, missing: [] };
     }
-    const clearedNormalized = (student.subjects_cleared || []).map(s => s.toLowerCase().trim());
+    const clearedArray = Array.isArray(student.subjects_cleared) 
+      ? student.subjects_cleared 
+      : String(student.subjects_cleared || '').split(';').map(s => s.trim());
+    const clearedNormalized = clearedArray.map(s => s.toLowerCase().trim()).filter(Boolean);
     const missing = elective.prerequisites.filter(prereq => {
       const p = prereq.toLowerCase().trim();
       return !clearedNormalized.includes(p);
@@ -62,12 +74,16 @@ class AdvisorEngine {
     };
   }
 
-  // Check weak subject conflicts
+  // Check weak subject conflicts (safe for arrays and strings)
   checkWeakSubjectConflict(student, elective) {
     const conflicts = [];
-    if (!student.weak_subjects || student.weak_subjects.length === 0) return conflicts;
+    const weakList = Array.isArray(student.weak_subjects)
+      ? student.weak_subjects
+      : String(student.weak_subjects || '').split(';').map(w => w.trim()).filter(Boolean);
+    if (weakList.length === 0) return conflicts;
     
-    for (const weak of student.weak_subjects) {
+    for (const weak of weakList) {
+      if (!weak || weak.toLowerCase() === 'none') continue;
       const weakLower = weak.toLowerCase();
       // Check related subjects
       for (const rel of elective.related_subjects) {
@@ -192,7 +208,11 @@ class AdvisorEngine {
   }
 
   // Recommend best 3 elective combinations for a student
-  recommend(student) {
+  recommend(rawStudent) {
+    const student = this.normalizeStudent(rawStudent);
+    if (!student) {
+      return { success: false, diagnostics: { student: rawStudent, unmetReasons: ['Invalid student profile'] }, recommendations: [] };
+    }
     const requiredTotal = student.required_pe + student.required_oe;
     const diagnostics = {
       student,
