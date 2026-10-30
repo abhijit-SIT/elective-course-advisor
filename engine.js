@@ -10,17 +10,25 @@ class AdvisorEngine {
   }
 
   normalizeElective(e) {
+    const rawType = (e.type || '').trim();
+    const isTech = rawType.toLowerCase().includes('tech') || rawType.toLowerCase().includes('program');
+    let slotVal = (e.timetable_slot || e.slot || '').trim();
+    if (!slotVal.toLowerCase().startsWith('slot') && slotVal.length <= 2) {
+      slotVal = `Slot ${slotVal.toUpperCase()}`;
+    }
+
     return {
-      course_code: (e.course_code || '').trim(),
-      course_name: (e.course_name || '').trim(),
-      type: (e.type || '').trim(), // 'Program Elective' or 'Open Elective'
-      slot: (e.slot || '').trim(),
+      course_code: (e.elective_id || e.course_code || '').trim(),
+      course_name: (e.elective_name || e.course_name || '').trim(),
+      type: isTech ? 'Technical Elective' : 'Open Elective',
+      rawType: isTech ? 'PE' : 'OE',
+      slot: slotVal,
       prerequisites: (e.prerequisites || 'None').split(';').map(p => p.trim()).filter(p => p && p.toLowerCase() !== 'none'),
       difficulty: (e.difficulty || 'Medium').trim(),
       weekly_hours: parseFloat(e.weekly_hours) || 3,
       career_tags: (e.career_tags || '').split(';').map(t => t.trim()).filter(Boolean),
       skill_tags: (e.skill_tags || '').split(';').map(t => t.trim()).filter(Boolean),
-      related_subjects: (e.related_subjects || '').split(';').map(r => r.trim()).filter(Boolean)
+      related_subjects: (e.related_subjects || e.prerequisites || '').split(';').map(r => r.trim()).filter(Boolean)
     };
   }
 
@@ -38,12 +46,16 @@ class AdvisorEngine {
     };
   }
 
-  // Check if student clears prerequisites for a course
+  // Check if student clears prerequisites for a course (case-insensitive)
   checkPrerequisites(student, elective) {
     if (!elective.prerequisites || elective.prerequisites.length === 0) {
       return { satisfied: true, missing: [] };
     }
-    const missing = elective.prerequisites.filter(prereq => !student.subjects_cleared.includes(prereq));
+    const clearedNormalized = (student.subjects_cleared || []).map(s => s.toLowerCase().trim());
+    const missing = elective.prerequisites.filter(prereq => {
+      const p = prereq.toLowerCase().trim();
+      return !clearedNormalized.includes(p);
+    });
     return {
       satisfied: missing.length === 0,
       missing
@@ -197,7 +209,7 @@ class AdvisorEngine {
     // 1. Filter electives by prerequisite satisfaction
     this.electives.forEach(course => {
       const prereqCheck = this.checkPrerequisites(student, course);
-      const isPE = course.type.toLowerCase().includes('program');
+      const isPE = course.rawType === 'PE' || course.type.toLowerCase().includes('program') || course.type.toLowerCase().includes('tech');
       
       if (prereqCheck.satisfied) {
         if (isPE) diagnostics.eligiblePE.push(course);

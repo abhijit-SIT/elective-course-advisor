@@ -29,12 +29,17 @@
   --color-info: #38bdf8;
   --color-info-bg: rgba(56, 189, 248, 0.15);
 
-  /* Slots */
+  /* Slots A through J (Technical A-F, Open G-J) */
   --slot-a: #f43f5e;
   --slot-b: #3b82f6;
   --slot-c: #10b981;
   --slot-d: #f59e0b;
   --slot-e: #a855f7;
+  --slot-f: #06b6d4;
+  --slot-g: #ec4899;
+  --slot-h: #14b8a6;
+  --slot-i: #8b5cf6;
+  --slot-j: #eab308;
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -470,6 +475,11 @@ body {
 .dot.slot-c { background: var(--slot-c); }
 .dot.slot-d { background: var(--slot-d); }
 .dot.slot-e { background: var(--slot-e); }
+.dot.slot-f { background: var(--slot-f); }
+.dot.slot-g { background: var(--slot-g); }
+.dot.slot-h { background: var(--slot-h); }
+.dot.slot-i { background: var(--slot-i); }
+.dot.slot-j { background: var(--slot-j); }
 
 /* ================= RECOMMENDATIONS CARDS GRID ================= */
 .cards-grid {
@@ -648,6 +658,11 @@ body {
 .slot-tag.slot-c { background: var(--slot-c); }
 .slot-tag.slot-d { background: var(--slot-d); }
 .slot-tag.slot-e { background: var(--slot-e); }
+.slot-tag.slot-f { background: var(--slot-f); }
+.slot-tag.slot-g { background: var(--slot-g); }
+.slot-tag.slot-h { background: var(--slot-h); }
+.slot-tag.slot-i { background: var(--slot-i); }
+.slot-tag.slot-j { background: var(--slot-j); }
 
 .course-type-pill {
   font-size: 0.68rem;
@@ -711,6 +726,11 @@ body {
 .slot-box.filled.slot-c { background: var(--slot-c); }
 .slot-box.filled.slot-d { background: var(--slot-d); }
 .slot-box.filled.slot-e { background: var(--slot-e); }
+.slot-box.filled.slot-f { background: var(--slot-f); }
+.slot-box.filled.slot-g { background: var(--slot-g); }
+.slot-box.filled.slot-h { background: var(--slot-h); }
+.slot-box.filled.slot-i { background: var(--slot-i); }
+.slot-box.filled.slot-j { background: var(--slot-j); }
 
 /* GAINS & TRADEOFFS SECTION */
 .analysis-box {

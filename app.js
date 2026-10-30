@@ -458,7 +458,7 @@
       card.className = `rec-card rank-${rec.rank}`;
 
       // Slot mini timeline blocks
-      const allSlots = ['Slot A', 'Slot B', 'Slot C', 'Slot D', 'Slot E'];
+      const allSlots = ['Slot A', 'Slot B', 'Slot C', 'Slot D', 'Slot E', 'Slot F', 'Slot G', 'Slot H', 'Slot I', 'Slot J'];
       const slotHtml = allSlots.map(slotName => {
         const matchingCourse = rec.courses.find(c => c.slot === slotName);
         if (matchingCourse) {
