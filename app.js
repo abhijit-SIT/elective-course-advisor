@@ -621,7 +621,7 @@
 
       const statusBadge = `<span class="status-badge status-${item.status.toLowerCase()}">${item.status}</span>`;
       const topComboStr = item.topRecommendation 
-        ? item.topRecommendation.courses.map(c => `<b>${c.course_code}</b> (${c.slot})`).join(', ') + ` [${item.topRecommendation.totalWeeklyHours}h]`
+        ? item.topRecommendation.courses.map(c => `<b>${c.course_code} ${c.course_name}</b> (${c.slot})`).join('<br>') + ` <small style="color:#94a3b8;">[${item.topRecommendation.totalWeeklyHours}h/wk]</small>`
         : '<span style="color:var(--color-danger); font-style:italic;">None Possible</span>';
 
       const notesHtml = item.unmetReasons.length > 0 
