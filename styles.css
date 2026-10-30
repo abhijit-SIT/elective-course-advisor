@@ -183,6 +183,10 @@ body {
   width: 100%;
 }
 
+.hidden {
+  display: none !important;
+}
+
 .view-panel {
   display: flex;
   flex-direction: column;
