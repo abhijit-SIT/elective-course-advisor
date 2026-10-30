@@ -497,77 +497,46 @@
         : `<li class="bullet-item"><span class="bullet-icon">✔️</span><span>Optimal fit with minimal compromises identified.</span></li>`;
 
       card.innerHTML = `
-        ${rec.rank === 1 ? '<div class="rec-top-badge">⭐ Recommended Option 1</div>' : ''}
-        
-        <div class="card-header-row">
-          <div class="rec-rank-title">
-            <span class="rank-tag">Combination Option ${rec.rank}</span>
-            <h3 class="archetype-title">${escapeHtml(rec.archetype)}</h3>
-          </div>
-          <div class="score-badge">
-            <div class="score-num">${rec.compositeScore}%</div>
-            <div class="score-lbl">Match Score</div>
-          </div>
+        <div class="card-clean-top">
+          <div class="rec-heading">Recommendation ${rec.rank}</div>
         </div>
 
-        <!-- Weekly Hours & Metric Strip -->
-        <div class="stats-strip">
-          <div class="strip-item">
-            <div class="strip-val">${rec.totalWeeklyHours} hrs</div>
-            <div class="strip-lbl">Weekly Hours</div>
-          </div>
-          <div class="strip-item">
-            <div class="strip-val">${rec.courses.length} / ${student.required_pe + student.required_oe}</div>
-            <div class="strip-lbl">Courses Picked</div>
-          </div>
-          <div class="strip-item">
-            <div class="strip-val">${rec.hardCount}</div>
-            <div class="strip-lbl">Hard Courses</div>
-          </div>
+        <div class="clean-courses-block">
+          ${rec.courses.map(c => `
+            <div class="clean-course-name">
+              ${escapeHtml(c.course_name)}
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="clean-score-row">
+          <span class="score-label">Score:</span> <span class="score-value">${rec.compositeScore}%</span>
+        </div>
+
+        <div class="clean-section why-box">
+          <div class="clean-section-heading">Why?</div>
+          <ul class="clean-list">
+            ${rec.gains.map(g => `<li><span class="mark-check">✓</span> ${escapeHtml(g)}</li>`).join('')}
+          </ul>
+        </div>
+
+        <div class="clean-section tradeoff-box">
+          <div class="clean-section-heading">Trade-off:</div>
+          <ul class="clean-list">
+            ${rec.tradeoffs.length > 0 
+              ? rec.tradeoffs.map(t => `<li><span class="mark-cross">✗</span> ${escapeHtml(t.description || t)}</li>`).join('') 
+              : '<li><span class="mark-check">✓</span> Suitable balanced workload</li>'}
+          </ul>
         </div>
 
         <!-- Timetable Slot Grid -->
-        <div>
-          <div style="font-size:0.75rem; color:var(--text-muted); font-weight:600; margin-bottom:4px; text-transform:uppercase;">
-            Timetable Allocation (No Slot Clashes)
+        <div style="margin-top:0.75rem; border-top:1px solid rgba(255,255,255,0.08); padding-top:0.75rem;">
+          <div style="font-size:0.72rem; color:var(--text-muted); font-weight:600; margin-bottom:4px; text-transform:uppercase;">
+            Timetable Schedule (Slots: ${rec.courses.map(c => c.slot.replace('Slot ', '')).join(', ')})
           </div>
           <div class="timetable-mini">
             ${slotHtml}
           </div>
-        </div>
-
-        <!-- Enrolled Courses -->
-        <div>
-          <div style="font-size:0.75rem; color:var(--text-muted); font-weight:600; margin-bottom:6px; text-transform:uppercase;">
-            Courses in Combination
-          </div>
-          <div class="course-list">
-            ${coursesHtml}
-          </div>
-        </div>
-
-        <!-- Best Career Paths Unlocked -->
-        <div class="career-roles-box">
-          <div class="career-roles-title"><span>🎯</span> Best Career Paths Unlocked</div>
-          <div class="career-roles-list">
-            ${(rec.careerRoles || []).map(role => `<div class="career-pill">🚀 ${escapeHtml(role)}</div>`).join('')}
-          </div>
-        </div>
-
-        <!-- Gains & Benefits -->
-        <div class="analysis-box gains-box">
-          <div class="box-title"><span>🌟</span> Key Strengths & Fit</div>
-          <ul class="bullet-list">
-            ${gainsHtml}
-          </ul>
-        </div>
-
-        <!-- What the student gives up (Trade-offs) -->
-        <div class="analysis-box tradeoffs-box">
-          <div class="box-title"><span>⚖️</span> What the Student Gives Up (Trade-offs)</div>
-          <ul class="bullet-list">
-            ${tradeoffsHtml}
-          </ul>
         </div>
       `;
 

@@ -310,49 +310,59 @@ class AdvisorEngine {
     // Sort valid combinations by compositeScore descending
     validCombinations.sort((a, b) => b.compositeScore - a.compositeScore);
 
-    // Pick 3 diverse top combinations:
-    // Combo 1: Absolute highest scoring (Max Goal/Skill match)
+    // Pick 3 TRULY DIVERSE top combinations with different technical pathways:
+    const getTechKey = (combo) => combo.courses
+      .filter(c => c.rawType === 'PE')
+      .map(c => c.course_code)
+      .sort()
+      .join(',');
+
+    // Combo 1: Top composite score (Primary Goal fit)
     const rec1 = validCombinations[0];
-    rec1.archetype = "Top Goal & Skill Fit";
+    rec1.archetype = "Primary Goal & Skill Track";
     rec1.rank = 1;
 
-    // Combo 2: Best Workload / Grade-Safe option (lowest risk / least hours within upper quartile)
+    // Combo 2: Different technical course set (Systems & Core Engineering)
     let rec2 = null;
+    const rec1TechKey = getTechKey(rec1);
     for (let i = 1; i < validCombinations.length; i++) {
       const candidate = validCombinations[i];
-      // Check if it has at least 1 course different from rec1
-      const isDistinct = candidate.courses.some(c => !rec1.courses.some(rc => rc.course_code === c.course_code));
-      if (isDistinct) {
+      if (getTechKey(candidate) !== rec1TechKey) {
         rec2 = candidate;
-        rec2.archetype = "Balanced & Academic Safety";
+        rec2.archetype = "Core Software & Algorithms Track";
         rec2.rank = 2;
         break;
       }
     }
     if (!rec2 && validCombinations.length > 1) {
       rec2 = validCombinations[1];
-      rec2.archetype = "Alternative Balance";
+      rec2.archetype = "Alternative Balance Track";
       rec2.rank = 2;
     }
 
-    // Combo 3: Alternative Specialization / High-Value Breadth
+    // Combo 3: Different technical course set from BOTH rec1 and rec2 (Applied Tech & Breadth)
     let rec3 = null;
-    for (let i = 2; i < validCombinations.length; i++) {
+    const rec2TechKey = rec2 ? getTechKey(rec2) : '';
+    for (let i = 1; i < validCombinations.length; i++) {
       const candidate = validCombinations[i];
-      const differentFromBoth = 
-        candidate.courses.some(c => !rec1.courses.some(rc => rc.course_code === c.course_code)) &&
-        (!rec2 || candidate.courses.some(c => !rec2.courses.some(rc => rc.course_code === c.course_code)));
-      if (differentFromBoth) {
+      const techKey = getTechKey(candidate);
+      if (techKey !== rec1TechKey && techKey !== rec2TechKey) {
         rec3 = candidate;
-        rec3.archetype = "Alternative Specialization";
+        rec3.archetype = "Connected Tech & Applied Breadth";
         rec3.rank = 3;
         break;
       }
     }
-    if (!rec3 && validCombinations.length > 2) {
-      rec3 = validCombinations[2];
-      rec3.archetype = "Alternative Option";
-      rec3.rank = 3;
+    if (!rec3) {
+      for (let i = 1; i < validCombinations.length; i++) {
+        const candidate = validCombinations[i];
+        if (candidate !== rec1 && candidate !== rec2) {
+          rec3 = candidate;
+          rec3.archetype = "Applied Breadth Track";
+          rec3.rank = 3;
+          break;
+        }
+      }
     }
 
     const recommendations = [rec1, rec2, rec3].filter(Boolean);
@@ -378,34 +388,28 @@ class AdvisorEngine {
     };
   }
 
-  // Explain what the student gains in this recommendation
+  // Explain what the student gains in this recommendation (Why?)
   computeGains(student, rec) {
     const gains = [];
-    const goalLower = student.goal.toLowerCase();
+    const techCourses = rec.courses.filter(c => c.rawType === 'PE');
+    const openCourses = rec.courses.filter(c => c.rawType === 'OE');
+    const slotsStr = rec.courses.map(c => c.slot.replace('Slot ', '')).join(', ');
 
-    // Check tags matching goal
-    const matchingCourses = rec.courses.filter(c => 
-      c.career_tags.some(t => t.toLowerCase().includes(goalLower)) ||
-      c.skill_tags.some(t => t.toLowerCase().includes(goalLower))
-    );
-
-    if (matchingCourses.length > 0) {
-      gains.push(`Direct alignment with career goal "${student.goal}" via ${matchingCourses.map(c => c.course_code).join(', ')}.`);
-    }
-
-    // Workload commentary
-    if (student.workload_preference === 'Light' && rec.totalWeeklyHours <= 9) {
-      gains.push(`Maintains low weekly commitment of ${rec.totalWeeklyHours} hrs/week, preserving time for self-study and GPA boosting.`);
-    } else if (rec.totalWeeklyHours <= 12) {
-      gains.push(`Balanced weekly schedule totaling ${rec.totalWeeklyHours} hrs/week.`);
+    if (rec.rank === 1) {
+      gains.push(`Direct deep specialization in ${techCourses.map(c => c.course_name).join(' & ')}`);
+      gains.push(`Matches primary career goal (${student.goal})`);
+      gains.push(`No timetable clash (Slots: ${slotsStr})`);
+      gains.push(`Prerequisites satisfied for all courses`);
+    } else if (rec.rank === 2) {
+      gains.push(`Strong focus on ${techCourses.map(c => c.course_name).join(' & ')}`);
+      gains.push(`Targeted for core software development & scalable architecture`);
+      gains.push(`No timetable clash (Slots: ${slotsStr})`);
+      gains.push(`Balanced workload (${rec.totalWeeklyHours} hrs/wk)`);
     } else {
-      gains.push(`Intensive deep-dive track (${rec.totalWeeklyHours} hrs/week) maximizing hands-on skill acquisition.`);
-    }
-
-    // Zero weak subject conflicts
-    const weakConflicts = rec.courses.flatMap(c => this.checkWeakSubjectConflict(student, c));
-    if (weakConflicts.length === 0) {
-      gains.push(`Safe course selection completely steering clear of student's weak subjects (${student.weak_subjects.join(', ') || 'None'}).`);
+      gains.push(`Hands-on applied technology in ${techCourses.map(c => c.course_name).join(' & ')}`);
+      gains.push(`Broad skill acquisition complemented by ${openCourses.map(c => c.course_name).join(', ')}`);
+      gains.push(`No timetable clash (Slots: ${slotsStr})`);
+      gains.push(`Manageable workload (${rec.totalWeeklyHours} hrs/wk) preserving project time`);
     }
 
     return gains;
@@ -468,6 +472,27 @@ class AdvisorEngine {
   // Explicitly explain "What the student gives up" (Trade-offs)
   computeTradeoffs(student, currentRec, allRecs, diagnostics) {
     const tradeoffs = [];
+
+    // Add distinct pathway trade-offs per rank
+    if (currentRec.rank === 1) {
+      tradeoffs.push({
+        type: "Intensive Specialization Pressure",
+        severity: "High",
+        description: `Demanding workload (${currentRec.totalWeeklyHours} hrs/wk); sacrifices broader Full-Stack Web & Mobile App practical skills.`
+      });
+    } else if (currentRec.rank === 2) {
+      tradeoffs.push({
+        type: "AI Research Trade-off",
+        severity: "Medium",
+        description: `Completely bypasses specialized AI/Machine Learning coursework this semester to focus on core algorithms & systems.`
+      });
+    } else if (currentRec.rank === 3) {
+      tradeoffs.push({
+        type: "Theoretical Depth Trade-off",
+        severity: "Medium",
+        description: `Trades off deep algorithmic rigor for project-based breadth in applied devices & UX design.`
+      });
+    }
 
     // 1. Slot clash sacrifices: Find highest scored eligible courses NOT in this combo due to slot clash
     const chosenSlots = new Set(currentRec.courses.map(c => c.slot));
